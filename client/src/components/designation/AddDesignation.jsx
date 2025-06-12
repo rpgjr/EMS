@@ -1,6 +1,22 @@
-import React from "react";
+import axios from "axios";
+import React, { useState } from "react";
 
 const AddDesignation = () => {
+  const[designation, setDesignation] = useState({
+    title: ''
+  });
+
+  const handleChange = (event) => {
+		const { name, value } = event.target;
+		setDesignation((prevState) => ({ ...prevState, [name]: value }));
+	};
+
+  const handleSubmit = (event) => {
+    const endpoint = 'http://localhost:8080/designation/add';
+    event.preventDefault();
+    axios.post(endpoint, designation).then(document.getElementById("addDesignationModal").close()).catch(err => console.log(err));
+  }
+
   return (
     <>
       <dialog id="addDesignationModal" className="modal">
@@ -11,12 +27,14 @@ const AddDesignation = () => {
               Input the name of the desired designation/position/title.
             </p>
           </div>
-          <form method="dialog">
+          <form method="dialog" onSubmit={handleSubmit}>
             <fieldset className="fieldset mb-5">
               <legend className="fieldset-legend">
                 Designation<span className="text-red-500">*</span>
               </legend>
               <input
+                onChange={handleChange}
+                name="title"
                 type="text"
                 className="input w-full"
                 placeholder="Type here"
