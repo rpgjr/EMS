@@ -1,21 +1,28 @@
 import axios from "axios";
 import React, { useState } from "react";
 
-const AddDesignation = () => {
-  const[designation, setDesignation] = useState({
-    title: ''
+const AddDesignation = ({ fetchDesignation }) => {
+  const endpoint = "http://localhost:8080/designation/add";
+  const [designation, setDesignation] = useState({
+    title: "",
   });
 
   const handleChange = (event) => {
-		const { name, value } = event.target;
-		setDesignation((prevState) => ({ ...prevState, [name]: value }));
-	};
+    const { name, value } = event.target;
+    setDesignation((prevState) => ({ ...prevState, [name]: value }));
+  };
 
-  const handleSubmit = (event) => {
-    const endpoint = 'http://localhost:8080/designation/add';
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    axios.post(endpoint, designation).then(document.getElementById("addDesignationModal").close()).catch(err => console.log(err));
-  }
+    await axios.post(endpoint, designation).catch((err) => console.log(err));
+    await fetchDesignation();
+    closeModal();
+    event.target.title.value = "";
+  };
+
+  const closeModal = () => {
+    document.getElementById("addDesignationModal").close();
+  };
 
   return (
     <>
@@ -37,12 +44,15 @@ const AddDesignation = () => {
                 name="title"
                 type="text"
                 className="input w-full"
-                placeholder="Type here"
-              />
+                placeholder="Type here" />
             </fieldset>
             <div className="flex gap-1">
-              <button className="btn bg-green-400 text-base-100">Add</button>
-              <button className="btn">Cancel</button>
+              <button className="btn bg-green-400 text-base-100" type="submit">
+                Add
+              </button>
+              <button className="btn" type="button" onClick={closeModal}>
+                Cancel
+              </button>
             </div>
           </form>
         </div>

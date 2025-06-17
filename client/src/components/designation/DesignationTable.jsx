@@ -1,25 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { FaRegTrashAlt } from "react-icons/fa";
 import { HiPencilSquare } from "react-icons/hi2";
-import UpdateDesignation from "./UpdateDesignation";
-import DeleteDesignation from "./DeleteDesignation";
-import axios from "axios";
 
-const DesignationTable = () => {
-  const [designations, setDesignation] = useState([]);
+const DesignationTable = ({ designations, setSelectedDesignation, setSelectedModal }) => {
 
-  const fetchDesignation = async () => {
-    const endpoint = "http://localhost:8080/designation/all";
-    await axios.get(endpoint).then((response) => {
-      setDesignation(response.data);
-    });
-  };
+  const showUpdateModal = () => {
+    document.getElementById("updateDesignationModal").showModal();
+  }
 
-  useEffect(() => {
-    fetchDesignation();
-  }, [designations]);
-
-  console.log(designations);
+  const showDeleteModal = () => {
+    document.getElementById("deleteDesignationModal").showModal();
+  }
 
   return (
     <>
@@ -33,19 +24,27 @@ const DesignationTable = () => {
             </tr>
           </thead>
           <tbody>
-            {designations.map((designation) => (
-              <tr key={designation.id}>
-                <th>{designation.id}</th>
-                <td>{designation.title}</td>
+            {designations.map(( designation ) => (
+              <tr key={ designation.id }>
+                <th>{ designation.id }</th>
+                <td>{ designation.title }</td>
                 <td className="text-center flex gap-1 justify-center">
                   <button
                     className="btn bg-blue-400 p-3 text-base-100 text-xl"
-                    onClick={() => document.getElementById("updateDesignationModal").showModal()}>
+                    onClick={() => {
+                      setSelectedModal("updateDesignationModal");
+                      setSelectedDesignation(designation);
+                      showUpdateModal;
+                    }}>
                     <HiPencilSquare />
                   </button>
                   <button
                     className="btn bg-red-400 p-3 text-base-100 text-xl"
-                    onClick={() => document.getElementById("deleteDesignationModal").showModal()}>
+                    onClick={() => {
+                      setSelectedModal("deleteDesignationModal");
+                      setSelectedDesignation(designation);
+                      showDeleteModal;
+                    }}>
                     <FaRegTrashAlt />
                   </button>
                 </td>
@@ -54,8 +53,6 @@ const DesignationTable = () => {
           </tbody>
         </table>
       </div>
-      <UpdateDesignation />
-      <DeleteDesignation />
     </>
   );
 };

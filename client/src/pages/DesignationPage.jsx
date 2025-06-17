@@ -1,10 +1,36 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import UpdateDesignation from "../components/designation/UpdateDesignation";
+import DeleteDesignation from "../components/designation/DeleteDesignation";
 import DesignationTable from "../components/designation/DesignationTable";
-import { FaPlus } from "react-icons/fa6";
 import AddDesignation from "../components/designation/AddDesignation";
-import Alerts from "../components/Alerts";
+import { FaPlus } from "react-icons/fa6";
+import axios from "axios";
 
 const DesignationPage = () => {
+  const [designations, setDesignation] = useState([]);
+  const [selectedDesignation, setSelectedDesignation] = useState(null);
+  const [selectedModal, setSelectedModal] = useState(null);
+
+  const fetchDesignation = async () => {
+    const endpoint = "http://localhost:8080/designation/all";
+    await axios.get(endpoint).then((response) => {
+      setDesignation(response.data);
+    });
+  };
+
+  useEffect(() => {
+    fetchDesignation();
+  }, []);
+
+  useEffect(() => {
+    if (selectedDesignation) {
+      const modal = document.getElementById(selectedModal);
+
+      if (modal)
+        modal.showModal(); 
+    }
+  }, [selectedDesignation]);
+
   return (
     <>
       <div className="flex items-center justify-between">
@@ -15,10 +41,26 @@ const DesignationPage = () => {
           <FaPlus />
         </button>
       </div>
-      <DesignationTable />
-      {/* Add this to display modal for adding designation */}
-      <AddDesignation />
-      {/* <Alerts /> */}
+
+      <DesignationTable
+        designations={designations}
+        setSelectedDesignation={setSelectedDesignation}
+        setSelectedModal={setSelectedModal} />
+      <AddDesignation fetchDesignation={fetchDesignation} />
+
+      {selectedDesignation && (
+        <>
+          <UpdateDesignation 
+            designation={selectedDesignation}
+            fetchDesignation={fetchDesignation}
+            setSelectedModal={setSelectedModal}
+            setSelectedDesignation={setSelectedDesignation} />
+          <DeleteDesignation 
+            designation={selectedDesignation}
+            fetchDesignation={fetchDesignation}
+            setSelectedDesignation={setSelectedDesignation} />
+        </>
+      )}
     </>
   );
 };

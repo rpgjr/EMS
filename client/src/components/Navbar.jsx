@@ -5,7 +5,7 @@ const Navbar = () => {
   return (
     <>
       <div className="min-h-screen flex flex-col">
-        <div className="navbar bg-neutral text-neutral-content shadow-sm fixed">
+        <div className="navbar bg-neutral text-neutral-content shadow-sm fixed top-0 z-10">
           <div className="flex-1">
             <Link to="/" className="btn btn-ghost text-xl">
               EMS
